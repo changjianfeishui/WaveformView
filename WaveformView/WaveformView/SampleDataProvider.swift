@@ -9,13 +9,12 @@
 //  使用AVAssetReader从AVAsset中读取音频样本并返回一个NSData对象
 //  将从一个给定的视频资源中提取全部的样本集合
 
-import UIKit
 import AVFoundation
 
 typealias SampleDataProviderCompletionBlock = (NSData)->Void
 
-class SampleDataProvider: NSObject {
-    func loadAudioSamplesFormAsset(asset:AVAsset, completionBlock:SampleDataProviderCompletionBlock) {
+class SampleDataProvider {
+    static func loadAudioSamplesFormAsset(asset:AVAsset, completionBlock:SampleDataProviderCompletionBlock) {
         //1. 异步载入所需的tracks资源
         let tracks = "tracks"
         asset.loadValuesAsynchronouslyForKeys([tracks]) { 
@@ -37,7 +36,7 @@ class SampleDataProvider: NSObject {
     }
     
     
-    func readAudioSamplesFromAVsset(asset:AVAsset) -> NSData? {
+    static func readAudioSamplesFromAVsset(asset:AVAsset) -> NSData? {
         //1. 创建一个AVAssetReader对象读取资源
         guard let assetReader = try? AVAssetReader(asset: asset) else{
             print("Unable to create AVAssetReader")
@@ -72,7 +71,7 @@ class SampleDataProvider: NSObject {
                     //8. 获取blockBuffer数据长度
                     let length = CMBlockBufferGetDataLength(blockBuffer)
                     //9. 拼接sampleData
-                    let sampleBytes = UnsafeMutablePointer<Int16>(bitPattern: length)
+                    let sampleBytes = UnsafeMutablePointer<Int16>.alloc(length)
                     CMBlockBufferCopyDataBytes(blockBuffer, 0, length, sampleBytes)
                     sampleData.appendBytes(sampleBytes, length: length)
                 }
