@@ -20,17 +20,17 @@ class ViewController: UIViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
             
-            let keysURL = NSBundle.mainBundle().URLForResource("keys", withExtension: "mp3")!
-            let beatURL = NSBundle.mainBundle().URLForResource("beat", withExtension: "aiff")!
+            let keysURL = Bundle.main.url(forResource: "keys", withExtension: "mp3")!
+            let beatURL = Bundle.main.url(forResource: "beat", withExtension: "aiff")!
 
             
             keysWaveformView.waveColor = UIColor.blueWave()
             keysWaveformView.backgroundColor = UIColor.blueBackground()
-            keysWaveformView.asset = AVURLAsset(URL: keysURL)
+            keysWaveformView.asset = AVURLAsset(url: keysURL)
             
             beatWaveformView.waveColor = UIColor.greenWave()
             beatWaveformView.backgroundColor = UIColor.greenBackground()
-            beatWaveformView.asset = AVURLAsset(URL: beatURL)
+            beatWaveformView.asset = AVURLAsset(url: beatURL)
             
         }
 

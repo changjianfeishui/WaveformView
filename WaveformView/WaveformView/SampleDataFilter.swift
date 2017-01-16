@@ -10,29 +10,32 @@ import Foundation
 import CoreGraphics
 
 class SampleDataFilter {
-    var data:NSData!
-    convenience init(sampleData:NSData){
+    var data:Data!
+    convenience init(sampleData:Data){
         self.init()
         self.data = sampleData
     }
     
     //按照指定的尺寸约束来筛选数据
-    func filteredSamplesForSize(size:CGSize) -> [Float] {
+    func filteredSamplesForSize(_ size:CGSize) -> [Float] {
         /* 最终需要展示的样本集 */
         var filteredSamples = [Float]()
         //1. 每个样本为16字节,得到样本数量
-        let samplesCount = self.data.length/sizeof(Int16.self)
+        let samplesCount = self.data.count/MemoryLayout<Int16>.size
         //2. 某个宽度范围内显示多少个样本数量
         let binSize = Int(samplesCount / Int(size.width))
         //3. 得到所有字节数据
         /* 注意创建数组作为buffer时,要先分配好内存,即需要指定数组长度 */
-        var bytes = [Int16](count:self.data.length,repeatedValue:0)
-        self.data.getBytes(&bytes, length: self.data.length)
+        var bytes = [Int16](repeating: 0,count: self.data.count)
+        let data:NSData = self.data as NSData
+        
+        data.getBytes(&bytes, length: self.data.count);
+        
         //4. 以binSize为步长遍历所有样本,
         var maxSample: Int16 = 0
-        for i in 0.stride(to: samplesCount-1, by: binSize) {
+        for i in stride(from: 0, to: samplesCount-1, by: binSize) {
             
-            var sampleBin = [Int16](count:binSize,repeatedValue:0)
+            var sampleBin = [Int16](repeating: 0,count: binSize)
             for j in 0..<binSize {
                 /*小端存储,低字节序*/
                 sampleBin[j] = bytes[i + j].littleEndian
